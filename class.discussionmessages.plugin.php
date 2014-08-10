@@ -126,7 +126,6 @@ class DiscussionMessages extends Gdn_Plugin {
     if($Message) {
       echo Gdn_Format::Html($Message->Body);
     }
-    var_dump($Message);
   }
 	
 	public function Setup() {
