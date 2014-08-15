@@ -38,6 +38,18 @@ class DiscussionMessages extends Gdn_Plugin {
     $Menu->AddLink('Appearance', T('Discussion Messages'), 'settings/discussionmessages', 'Garden.Settings.Manage');
   }
   
+  public function DiscussionsController_DiscussionOptions_Handler($Sender) {
+    $Discussion = $Sender->EventArguments['Discussion'];
+    $Options =& $Sender->Options;
+    $Options .= Wrap(
+            Anchor(T('Add message'), 'settings/discussionmessages/add/' . $Discussion->DiscussionID  , array('class' => 'Popup')),
+            'li');
+  }
+  
+  public function DiscussionController_DiscussionOptions_Handler($Sender) {
+    //var_dump($Sender->EventArguments['DiscussionOptions']);
+  }
+  
 	public function SettingsController_DiscussionMessages_Create($Sender) {
 		$Sender->AddSideMenu('settings/discussionmessages');
 		$this->Dispatch($Sender, $Sender->RequestArgs);
@@ -54,6 +66,8 @@ class DiscussionMessages extends Gdn_Plugin {
   }
   
   public function Controller_Add($Sender) {
+    //var_dump($Sender->RequestArgs);
+    //die();
     $this->Controller_Edit($Sender);
   }
 	
