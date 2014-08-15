@@ -33,7 +33,11 @@ $PluginInfo['DiscussionMessages'] = array(
 
 class DiscussionMessages extends Gdn_Plugin {
 
-	// add a Testing Ground page on the settings controller
+  public function Base_GetAppSettingsMenuItems_Handler($Sender) {
+    $Menu = $Sender->EventArguments['SideMenu'];
+    $Menu->AddLink('Appearance', T('Discussion Messages'), 'settings/discussionmessages', 'Garden.Settings.Manage');
+  }
+  
 	public function SettingsController_DiscussionMessages_Create($Sender) {
 		$Sender->AddSideMenu('settings/discussionmessages');
 		$this->Dispatch($Sender, $Sender->RequestArgs);
