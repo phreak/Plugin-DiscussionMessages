@@ -26,7 +26,7 @@ echo Wrap(Anchor(T('Plugin.DiscussionMessages.Add'), 'settings/discussionmessage
       $Alt = $Alt ? '' : 'Alt';
       $Row = '';
       $Row .= Wrap($DiscussionMessage->Name, 'td');
-      $Row .= Wrap($DiscussionMessage->DiscussionID, 'td');
+      $Row .= Wrap(Anchor(T('[Link]'), '/discussion/' . $DiscussionMessage->DiscussionID), 'td');
       $Row .= Wrap($DiscussionMessage->Body, 'td');
       $Row .= Wrap(Anchor(T('Edit'), 'settings/discussionmessages/edit/' . $DiscussionMessage->DiscussionMessageID, array('class' => 'SmallButton')) . Anchor(T('Delete'), 'settings/discussionmessages/delete/' . $DiscussionMessage->DiscussionMessageID, array('class' => 'Danger Popup SmallButton')), 'td');
       echo Wrap($Row, 'tr', array('id' => 'DiscussionMessageID_' . $DiscussionMessage->DiscussionMessageID, 'data-discussionmessageid' => $DiscussionMessage->DiscussionMessageID, 'class' => $Alt));
