@@ -42,12 +42,38 @@ class DiscussionMessages extends Gdn_Plugin {
     $Discussion = $Sender->EventArguments['Discussion'];
     $Options =& $Sender->Options;
     $Options .= Wrap(
-            Anchor(T('Add message'), 'settings/discussionmessages/add/' . $Discussion->DiscussionID  , array('class' => 'Popup')),
+            Anchor(T('Add message'), 'discussion/messages/' . $Discussion->DiscussionID, array('class' => 'Popup')),
             'li');
   }
   
   public function DiscussionController_DiscussionOptions_Handler($Sender) {
-    //var_dump($Sender->EventArguments['DiscussionOptions']);
+    $Discussion = $Sender->EventArguments['Discussion'];
+    $Options =& $Sender->EventArguments['DiscussionOptions'];
+    $Options[] = array(
+        'Label' => T('Add message'),
+        'Url' => 'discussion/messages/' . $Discussion->DiscussionID,
+        'Class' => 'Popup'
+    );
+  }
+  
+  public function DiscussionController_Messages_Create($Sender) {
+    $DiscussionID = val(0,$Sender->RequestArgs,NULL);
+    if(is_null($DiscussionID)) {
+      Redirect('settings/discussionmessages/add');
+    }
+    $DiscussionMessageModel = new DiscussionMessageModel();
+    $Sender->Form->SetModel($DiscussionMessageModel);
+    $Sender->Form->AddHidden('DiscussionID', $DiscussionID);
+    
+    $Sender->Title(T('Add Discussion Message'));
+
+    if($Sender->Form->IsPostBack() != FALSE) {
+      if($Sender->Form->Save()) {
+        $Sender->InformMessage(T('Discussion Message added successfully!'));
+      }
+    }
+
+    $Sender->Render($this->GetView('message.php'));
   }
   
 	public function SettingsController_DiscussionMessages_Create($Sender) {
@@ -66,8 +92,6 @@ class DiscussionMessages extends Gdn_Plugin {
   }
   
   public function Controller_Add($Sender) {
-    //var_dump($Sender->RequestArgs);
-    //die();
     $this->Controller_Edit($Sender);
   }
 	
@@ -140,9 +164,11 @@ class DiscussionMessages extends Gdn_Plugin {
     $DiscussionMessageModel = new DiscussionMessageModel();
     $Discussion = GetValue('Discussion', $Sender->EventArguments);
     $DiscussionID = $Discussion->DiscussionID;
-    $Message = $DiscussionMessageModel->GetID($DiscussionID);
-    if($Message) {
-      echo Gdn_Format::Html($Message->Body);
+    $Messages = $DiscussionMessageModel->GetDiscussionID($DiscussionID);
+    if(count($Messages)) {
+      foreach($Messages as $Message) {
+        echo Wrap(Gdn_Format::Html($Message->Body), 'div', array('class' => 'DiscussionMessage'));
+      }
     }
   }
 	
@@ -157,6 +183,7 @@ class DiscussionMessages extends Gdn_Plugin {
     $Construct->Table('DiscussionMessage');
     $Construct
             ->PrimaryKey('DiscussionMessageID')
+            ->Column('Name', 'varchar(255)')
             ->Column('Body', 'text', FALSE, 'fulltext')
             ->Column('DiscussionID', 'int', FALSE)
             ->Set();

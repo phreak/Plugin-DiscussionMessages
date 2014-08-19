@@ -6,4 +6,8 @@ class DiscussionMessageModel extends Gdn_Model {
     parent::__construct('DiscussionMessage');
   }
   
+  public function GetDiscussionID($DiscussionID, $DatasetType = FALSE) {
+    $Result = $this->GetWhere(array('DiscussionID' => $DiscussionID))->Result($DatasetType);
+    return $Result;
+  }
 }
