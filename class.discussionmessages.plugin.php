@@ -32,6 +32,11 @@ $PluginInfo['DiscussionMessages'] = array(
 );
 
 class DiscussionMessages extends Gdn_Plugin {
+  
+  public function __construct() {
+    parent::__construct();
+    require_once($this->GetPluginFolder() . DS . 'library' . DS . 'functions.render.php');
+  }
 
   public function Base_GetAppSettingsMenuItems_Handler($Sender) {
     $Menu = $Sender->EventArguments['SideMenu'];
@@ -166,9 +171,7 @@ class DiscussionMessages extends Gdn_Plugin {
     $DiscussionID = $Discussion->DiscussionID;
     $Messages = $DiscussionMessageModel->GetDiscussionID($DiscussionID);
     if(count($Messages)) {
-      foreach($Messages as $Message) {
-        echo Wrap(Gdn_Format::Html($Message->Body), 'div', array('class' => 'DiscussionMessage'));
-      }
+      RenderDiscussionMessages($Messages);
     }
   }
 	
