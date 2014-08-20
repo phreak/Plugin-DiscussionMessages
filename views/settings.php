@@ -16,6 +16,7 @@ echo Wrap(Anchor(T('Plugin.DiscussionMessages.Add'), 'settings/discussionmessage
       <th><?php echo T('Name'); ?></th>
       <th><?php echo T('Discussion'); ?></th>
       <th><?php echo T('Body'); ?></th>
+      <th><?php echo T('Mobile Body'); ?></th>
       <th><?php echo T('Options'); ?></th>
     </tr>
   </thead>
@@ -25,9 +26,10 @@ echo Wrap(Anchor(T('Plugin.DiscussionMessages.Add'), 'settings/discussionmessage
     foreach($this->Data('DiscussionMessages') as $DiscussionMessage) {
       $Alt = $Alt ? '' : 'Alt';
       $Row = '';
-      $Row .= Wrap($DiscussionMessage->Name, 'td');
+      $Row .= Wrap(Gdn_Format::Html($DiscussionMessage->Name), 'td');
       $Row .= Wrap(Anchor(T('[Link]'), '/discussion/' . $DiscussionMessage->DiscussionID), 'td');
-      $Row .= Wrap($DiscussionMessage->Body, 'td');
+      $Row .= Wrap(Gdn_Format::Html($DiscussionMessage->Body), 'td');
+      $Row .= Wrap(Gdn_Format::Html($DiscussionMessage->MobileBody), 'td');
       $Row .= Wrap(Anchor(T('Edit'), 'settings/discussionmessages/edit/' . $DiscussionMessage->DiscussionMessageID, array('class' => 'SmallButton')) . Anchor(T('Delete'), 'settings/discussionmessages/delete/' . $DiscussionMessage->DiscussionMessageID, array('class' => 'Danger Popup SmallButton')), 'td');
       echo Wrap($Row, 'tr', array('id' => 'DiscussionMessageID_' . $DiscussionMessage->DiscussionMessageID, 'data-discussionmessageid' => $DiscussionMessage->DiscussionMessageID, 'class' => $Alt));
     }
