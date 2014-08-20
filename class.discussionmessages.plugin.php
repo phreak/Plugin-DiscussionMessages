@@ -218,6 +218,7 @@ class DiscussionMessages extends Gdn_Plugin {
             ->PrimaryKey('DiscussionMessageID')
             ->Column('Name', 'varchar(255)')
             ->Column('Body', 'text', FALSE, 'fulltext')
+            ->Column('MobileBody', 'text', TRUE, 'fulltext')
             ->Column('DiscussionID', 'int', FALSE)
             ->Set();
   }

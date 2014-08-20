@@ -16,13 +16,18 @@ if(!function_exists('RenderDiscussionMessages')) {
 if(!function_exists('RenderDiscussionMessage')) {
 
   function RenderDiscussionMessage($Message) {
+    $Body = $Message->Body;
+    if(IsMobile() && !empty($Message->MobileBody)) {
+      $Body = $Message->MobileBody;
+    }
+    
     return Wrap(
-            DMTools($Message) .
-            Gdn_Format::Html($Message->Body),
-            'div',
-            array(
-              'class' => 'DiscussionMessage',
-              'id' => 'DiscussionMessage_' . $Message->DiscussionMessageID
+          DMTools($Message) .
+          Gdn_Format::Html($Body),
+          'div',
+          array(
+            'class' => 'DiscussionMessage',
+            'id' => 'DiscussionMessage_' . $Message->DiscussionMessageID
     ));
   }
 
