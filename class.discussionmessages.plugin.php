@@ -82,8 +82,12 @@ class DiscussionMessages extends Gdn_Plugin {
     $Sender->Title(T('Add Discussion Message'));
 
     if($Sender->Form->IsPostBack() != FALSE) {
-      if($Sender->Form->Save()) {
+      $MessageID = $Sender->Form->Save();
+      if($MessageID) {
+        $Message = $DiscussionMessageModel->GetID($MessageID);
         $Sender->InformMessage(T('Discussion Message added successfully!'));
+        $Sender->JsonTarget('.MessageList.Discussion', RenderDiscussionMessage($Message), 'After');
+        $Sender->JsonTarget('#DiscussionMessage_' . $Message->DiscussionMessageID, NULL, 'Highlight');
       }
     }
 
@@ -141,10 +145,9 @@ class DiscussionMessages extends Gdn_Plugin {
         }
         else {
           $Sender->InformMessage(T('Discussion Message added successfully!'));
-        }
-        
-        if($Sender->DeliveryType() == DELIVERY_TYPE_ALL) {
-          Redirect('/settings/discussionmessages');
+          if($Sender->DeliveryType() == DELIVERY_TYPE_ALL) {
+            Redirect('/settings/discussionmessages');
+          }
         }
       }
     }
@@ -167,8 +170,7 @@ class DiscussionMessages extends Gdn_Plugin {
     $Sender->SetData('Title', T('Delete Discussion Message'));
     if($Sender->Form->IsPostBack()) {
       $Error = $DiscussionMessageModel->Delete($MessageID);
-      var_dump($Error);die();
-      if($Error) {
+      if((is_object($Error) && $Error->Result()) || (!is_object($Error) && $Error)) {
         $Sender->Form->AddError(T('Unable to delete discussion message!'));
       }
 
@@ -177,7 +179,7 @@ class DiscussionMessages extends Gdn_Plugin {
           Redirect('settings/discussionmessages');
         }
 
-        $Sender->JsonTarget('#DiscussionMessageID_' . $MessageID, NULL, 'SlideUp');
+        $Sender->JsonTarget('#DiscussionMessage_' . $MessageID, NULL, 'SlideUp');
       }
     }
     $Sender->Render($this->GetView('delete.php'));
