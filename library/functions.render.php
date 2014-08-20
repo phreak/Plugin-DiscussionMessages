@@ -4,32 +4,40 @@
 if(!function_exists('RenderDiscussionMessages')) {
 
   function RenderDiscussionMessages($Messages) {
+    $String = '';
     foreach($Messages as $Message) {
-      echo Wrap(
-              RenderDMTools($Message) . 
-              Gdn_Format::Html($Message->Body),
-              'div',
-              array(
-                  'class' => 'DiscussionMessage',
-                  'id' => 'DiscussionMessage_' . $Message->DiscussionMessageID
-              ));
+      $String .= RenderDiscussionMessage($Message);
     }
+    return $String;
   }
 
 }
 
+if(!function_exists('RenderDiscussionMessage')) {
 
-if(!function_exists('RenderDMTools')) {
-  
-  function RenderDMTools($Message) {
+  function RenderDiscussionMessage($Message) {
+    return Wrap(
+            DMTools($Message) .
+            Gdn_Format::Html($Message->Body),
+            'div',
+            array(
+              'class' => 'DiscussionMessage',
+              'id' => 'DiscussionMessage_' . $Message->DiscussionMessageID
+    ));
+  }
+
+}
+
+if(!function_exists('DMTools')) {
+
+  function DMTools($Message) {
     if(Gdn::Session()->CheckPermission('Plugins.DiscussionMessages.Manage')) {
-      echo Wrap(
-            Wrap(Anchor('Edit', 'settings/discussionmessages/edit/' . $Message->DiscussionMessageID, 'Popup'), 'li') .
-            Wrap(Anchor('Delete', 'settings/discussionmessages/delete/' . $Message->DiscussionMessageID, 'Popup'), 'li')
-            ,
-            'ul',
-            array('class' => 'Tools')
-            );
+      return Wrap(
+              Wrap(Anchor('Edit', 'settings/discussionmessages/edit/' . $Message->DiscussionMessageID, 'Popup'), 'li') .
+              Wrap(Anchor('Delete', 'settings/discussionmessages/delete/' . $Message->DiscussionMessageID, 'Popup'), 'li')
+              , 'ul', array('class' => 'Tools')
+      );
     }
   }
+
 }

@@ -61,6 +61,15 @@ class DiscussionMessages extends Gdn_Plugin {
     );
   }
   
+  public function DiscussionController_CommentOptions_Handler($Sender) {
+    if(GetValue('Type', $Sender->EventArguments, FALSE) == 'Discussion') {
+      $Discussion = $Sender->EventArguments['Discussion'];
+      echo Wrap(
+              Anchor(T('Add message'), 'discussion/messages/' . $Discussion->DiscussionID, array('class' => 'Popup')),
+              'span');
+    }
+  }
+  
   public function DiscussionController_Messages_Create($Sender) {
     $DiscussionID = GetValue(0,$Sender->RequestArgs,NULL);
     if(is_null($DiscussionID)) {
@@ -122,14 +131,21 @@ class DiscussionMessages extends Gdn_Plugin {
       }
     }
     else {
-      if($Sender->Form->Save()) {
+      $MessageID = $Sender->Form->Save();
+      if($MessageID) {
+        $Message = $DiscussionMessageModel->GetID($MessageID);
         if($Edit) {
+          $Sender->JsonTarget('#DiscussionMessage_' . $Message->DiscussionMessageID, RenderDiscussionMessage($Message), 'Html');
+          $Sender->JsonTarget('#DiscussionMessage_' . $Message->DiscussionMessageID, NULL, 'Highlight');
           $Sender->InformMessage(T('Discussion Message updated successfully!'));
         }
         else {
           $Sender->InformMessage(T('Discussion Message added successfully!'));
         }
-        Redirect('/settings/discussionmessages');
+        
+        if($Sender->DeliveryType() == DELIVERY_TYPE_ALL) {
+          Redirect('/settings/discussionmessages');
+        }
       }
     }
 
@@ -150,12 +166,14 @@ class DiscussionMessages extends Gdn_Plugin {
 
     $Sender->SetData('Title', T('Delete Discussion Message'));
     if($Sender->Form->IsPostBack()) {
-      if($DiscussionMessageModel->Delete($MessageID)) {
+      $Error = $DiscussionMessageModel->Delete($MessageID);
+      var_dump($Error);die();
+      if($Error) {
         $Sender->Form->AddError(T('Unable to delete discussion message!'));
       }
 
       if($Sender->Form->ErrorCount() == 0) {
-        if($Sender->_DeliveryType === DELIVERY_TYPE_ALL) {
+        if($Sender->DeliveryType() === DELIVERY_TYPE_ALL) {
           Redirect('settings/discussionmessages');
         }
 
@@ -165,13 +183,23 @@ class DiscussionMessages extends Gdn_Plugin {
     $Sender->Render($this->GetView('delete.php'));
   }
   
+  public function DiscussionController_AfterComment_Handler($Sender) {
+    if(GetValue('Type', $Sender->EventArguments, FALSE) == 'Discussion') {
+      $this->DiscussionController_AfterDiscussion_Handler($Sender);
+      $Sender->EventArguments['DM_Handled'] = TRUE;
+    }
+  }
+  
   public function DiscussionController_AfterDiscussion_Handler($Sender) {
-    $DiscussionMessageModel = new DiscussionMessageModel();
-    $Discussion = GetValue('Discussion', $Sender->EventArguments);
-    $DiscussionID = $Discussion->DiscussionID;
-    $Messages = $DiscussionMessageModel->GetDiscussionID($DiscussionID);
-    if(count($Messages)) {
-      RenderDiscussionMessages($Messages);
+    if(!GetValue('DM_Handled', $Sender->EventArguments, FALSE)) {    
+      $DiscussionMessageModel = new DiscussionMessageModel();
+      $Discussion = GetValue('Discussion', $Sender->EventArguments);
+      $DiscussionID = $Discussion->DiscussionID;
+      $Messages = $DiscussionMessageModel->GetDiscussionID($DiscussionID);
+      if(count($Messages)) {
+        echo RenderDiscussionMessages($Messages);
+      }
+      $Sender->EventArguments['DM_Handled'] = TRUE;
     }
   }
 	
