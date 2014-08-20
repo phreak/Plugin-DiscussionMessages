@@ -145,9 +145,10 @@ class DiscussionMessages extends Gdn_Plugin {
         }
         else {
           $Sender->InformMessage(T('Discussion Message added successfully!'));
-          if($Sender->DeliveryType() == DELIVERY_TYPE_ALL) {
-            Redirect('/settings/discussionmessages');
-          }
+        }
+        
+        if($Sender->DeliveryType() == DELIVERY_TYPE_ALL) {
+          Redirect('/settings/discussionmessages');
         }
       }
     }

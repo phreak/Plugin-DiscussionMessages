@@ -15,8 +15,14 @@ echo $this->Form->Errors();
   </li>
   <li>
     <?php
-    echo $this->Form->Label('Body', 'Body');
+    echo $this->Form->Label('Message', 'Body');
     echo $this->Form->TextBox('Body', array('multiline' => TRUE));
+    ?>
+  </li>
+  <li id="MobileBodyRow">
+    <?php
+    echo $this->Form->Label('Mobile Message', 'MobileBody');
+    echo $this->Form->TextBox('MobileBody', array('multiline' => TRUE));
     ?>
   </li>
 </ul>
