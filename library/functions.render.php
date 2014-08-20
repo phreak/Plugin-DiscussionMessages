@@ -24,8 +24,8 @@ if(!function_exists('RenderDMTools')) {
   function RenderDMTools($Message) {
     if(Gdn::Session()->CheckPermission('Plugins.DiscussionMessages.Manage')) {
       echo Wrap(
-            Wrap(Anchor('Edit', 'settings/discussionmessages/edit/' . $Message->DiscussionMessageID), 'li', array('class' => 'Popup')) .
-            Wrap(Anchor('Delete', 'settings/discussionmessages/delete/' . $Message->DiscussionMessageID), 'li', array('class' => 'Popup'))
+            Wrap(Anchor('Edit', 'settings/discussionmessages/edit/' . $Message->DiscussionMessageID, 'Popup'), 'li') .
+            Wrap(Anchor('Delete', 'settings/discussionmessages/delete/' . $Message->DiscussionMessageID, 'Popup'), 'li')
             ,
             'ul',
             array('class' => 'Tools')
