@@ -62,7 +62,7 @@ class DiscussionMessages extends Gdn_Plugin {
   }
   
   public function DiscussionController_Messages_Create($Sender) {
-    $DiscussionID = val(0,$Sender->RequestArgs,NULL);
+    $DiscussionID = GetValue(0,$Sender->RequestArgs,NULL);
     if(is_null($DiscussionID)) {
       Redirect('settings/discussionmessages/add');
     }
