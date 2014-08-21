@@ -94,8 +94,14 @@ class DiscussionMessages extends Gdn_Plugin {
     $Sender->Render($this->GetView('message.php'));
   }
   
+  public function DiscussionController_Render_Before($Sender) {
+    $Sender->AddJsFile($this->GetResource('js/discussionmessages.js', FALSE, FALSE));
+  }
+  
 	public function SettingsController_DiscussionMessages_Create($Sender) {
+    $Sender->Permission('Garden.Settings.Manage');
 		$Sender->AddSideMenu('settings/discussionmessages');
+    $Sender->AddJsFile($this->GetResource('js/discussionmessages.js', FALSE, FALSE));
 		$this->Dispatch($Sender, $Sender->RequestArgs);
 	}
   
@@ -113,9 +119,7 @@ class DiscussionMessages extends Gdn_Plugin {
     $this->Controller_Edit($Sender);
   }
 	
-  public function Controller_Edit($Sender) {
-    $Sender->Permission('Garden.Settings.Manage');
-    
+  public function Controller_Edit($Sender) {    
     $DiscussionMessageModel = new DiscussionMessageModel();
     $Sender->Form->SetModel($DiscussionMessageModel);
 

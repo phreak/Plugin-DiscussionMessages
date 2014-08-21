@@ -19,6 +19,11 @@ echo $this->Form->Errors();
     echo $this->Form->TextBox('Body', array('multiline' => TRUE));
     ?>
   </li>
+  <li id="MobileBodyCheck">
+    <?php
+    echo $this->Form->CheckBox('MobileBodyCheck', 'Use a separate message for Mobile users?', array('checked' => 'checked'));
+    ?>
+  </li>
   <li id="MobileBodyRow">
     <?php
     echo $this->Form->Label('Mobile Message', 'MobileBody');
