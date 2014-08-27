@@ -6,7 +6,7 @@ echo Wrap($this->Data('Title'), 'h1');
 echo $this->Form->Open();
 echo $this->Form->Errors();
 
-echo '<div class="P">' . T('Are you sure you want to delete this discussion message?') . '</div>';
+echo '<div class="P">' . T('Are you sure you want to delete this discussion insert?') . '</div>';
 
 echo '<div class="Buttons Buttons-Confirm">';
 echo $this->Form->Button('OK', array('class' => 'Button Primary'));

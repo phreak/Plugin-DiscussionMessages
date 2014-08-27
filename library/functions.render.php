@@ -1,33 +1,33 @@
 <?php if(!defined('APPLICATION')) exit();
 /* Copyright 2014 Zachary Doll */
 
-if(!function_exists('RenderDiscussionMessages')) {
+if(!function_exists('RenderDiscussionInserts')) {
 
-  function RenderDiscussionMessages($Messages) {
+  function RenderDiscussionInserts($Inserts) {
     $String = '';
-    foreach($Messages as $Message) {
-      $String .= RenderDiscussionMessage($Message);
+    foreach($Inserts as $Insert) {
+      $String .= RenderDiscussionInsert($Insert);
     }
     return $String;
   }
 
 }
 
-if(!function_exists('RenderDiscussionMessage')) {
+if(!function_exists('RenderDiscussionInsert')) {
 
-  function RenderDiscussionMessage($Message) {
-    $Body = $Message->Body;
-    if(IsMobile() && !empty($Message->MobileBody)) {
-      $Body = $Message->MobileBody;
+  function RenderDiscussionInsert($Insert) {
+    $Body = $Insert->Body;
+    if(IsMobile() && !empty($Insert->MobileBody)) {
+      $Body = $Insert->MobileBody;
     }
     
     return Wrap(
-          DMTools($Message) .
+          DMTools($Insert) .
           Gdn_Format::Html($Body),
           'div',
           array(
-            'class' => 'DiscussionMessage',
-            'id' => 'DiscussionMessage_' . $Message->DiscussionMessageID
+            'class' => 'DiscussionInsert',
+            'id' => 'DiscussionInsert_' . $Insert->DiscussionInsertID
     ));
   }
 
@@ -35,11 +35,11 @@ if(!function_exists('RenderDiscussionMessage')) {
 
 if(!function_exists('DMTools')) {
 
-  function DMTools($Message) {
-    if(Gdn::Session()->CheckPermission('Plugins.DiscussionMessages.Manage')) {
+  function DMTools($Insert) {
+    if(Gdn::Session()->CheckPermission('Plugins.DiscussionInserts.Manage')) {
       return Wrap(
-              Wrap(Anchor('Edit', 'settings/discussionmessages/edit/' . $Message->DiscussionMessageID, 'Popup'), 'li') .
-              Wrap(Anchor('Delete', 'settings/discussionmessages/delete/' . $Message->DiscussionMessageID, 'Popup'), 'li')
+              Wrap(Anchor('Edit', 'settings/discussioninserts/edit/' . $Insert->DiscussionInsertID, 'Popup'), 'li') .
+              Wrap(Anchor('Delete', 'settings/discussioninserts/delete/' . $Insert->DiscussionInsertID, 'Popup'), 'li')
               , 'ul', array('class' => 'Tools')
       );
     }

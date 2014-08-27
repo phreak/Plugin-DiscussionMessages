@@ -13,9 +13,9 @@
 *	You should have received a copy of the GNU General Public License
 *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-$PluginInfo['DiscussionMessages'] = array(
-	'Name' => 'Discussion Messages',
-	'Description' => 'Adds messages to specific discussions.',
+$PluginInfo['DiscussionInserts'] = array(
+	'Name' => 'Discussion Inserts',
+	'Description' => 'Adds inserts to specific discussions.',
 	'Version' => '0.1',
 	'RequiredApplications' => array('Vanilla' => '2.0.18.13'),
 	'RequiredTheme' => FALSE,
@@ -23,7 +23,7 @@ $PluginInfo['DiscussionMessages'] = array(
 	'MobileFriendly' => TRUE,
 	'HasLocale' => TRUE,
 	'RegisterPermissions' => FALSE,
-  'SettingsUrl' => '/settings/discussionmessages',
+  'SettingsUrl' => '/settings/discussioninserts',
 	'SettingsPermission' => 'Garden.Settings.Manage',
 	'Author' => 'Zachary Doll',
 	'AuthorEmail' => 'hgtonight@daklutz.com',
@@ -31,7 +31,7 @@ $PluginInfo['DiscussionMessages'] = array(
 	'License' => 'GPLv3'
 );
 
-class DiscussionMessages extends Gdn_Plugin {
+class DiscussionInserts extends Gdn_Plugin {
   
   public function __construct() {
     parent::__construct();
@@ -40,14 +40,14 @@ class DiscussionMessages extends Gdn_Plugin {
 
   public function Base_GetAppSettingsMenuItems_Handler($Sender) {
     $Menu = $Sender->EventArguments['SideMenu'];
-    $Menu->AddLink('Appearance', T('Discussion Messages'), 'settings/discussionmessages', 'Garden.Settings.Manage');
+    $Menu->AddLink('Appearance', T('Discussion Inserts'), 'settings/discussioninserts', 'Garden.Settings.Manage');
   }
   
   public function DiscussionsController_DiscussionOptions_Handler($Sender) {
     $Discussion = $Sender->EventArguments['Discussion'];
     $Options =& $Sender->Options;
     $Options .= Wrap(
-            Anchor(T('Add message'), 'discussion/messages/' . $Discussion->DiscussionID, array('class' => 'Popup')),
+            Anchor(T('Add Insert'), 'discussion/inserts/' . $Discussion->DiscussionID, array('class' => 'Popup')),
             'li');
   }
   
@@ -55,8 +55,8 @@ class DiscussionMessages extends Gdn_Plugin {
     $Discussion = $Sender->EventArguments['Discussion'];
     $Options =& $Sender->EventArguments['DiscussionOptions'];
     $Options[] = array(
-        'Label' => T('Add message'),
-        'Url' => 'discussion/messages/' . $Discussion->DiscussionID,
+        'Label' => T('Add Insert'),
+        'Url' => 'discussion/inserts/' . $Discussion->DiscussionID,
         'Class' => 'Popup'
     );
   }
@@ -65,53 +65,53 @@ class DiscussionMessages extends Gdn_Plugin {
     if(GetValue('Type', $Sender->EventArguments, FALSE) == 'Discussion') {
       $Discussion = $Sender->EventArguments['Discussion'];
       echo Wrap(
-              Anchor(T('Add message'), 'discussion/messages/' . $Discussion->DiscussionID, array('class' => 'Popup')),
+              Anchor(T('Add Insert'), 'discussion/inserts/' . $Discussion->DiscussionID, array('class' => 'Popup')),
               'span');
     }
   }
   
-  public function DiscussionController_Messages_Create($Sender) {
+  public function DiscussionController_Inserts_Create($Sender) {
     $DiscussionID = GetValue(0,$Sender->RequestArgs,NULL);
     if(is_null($DiscussionID)) {
-      Redirect('settings/discussionmessages/add');
+      Redirect('settings/discussioninserts/add');
     }
-    $DiscussionMessageModel = new DiscussionMessageModel();
-    $Sender->Form->SetModel($DiscussionMessageModel);
+    $DiscussionInsertModel = new DiscussionInsertModel();
+    $Sender->Form->SetModel($DiscussionInsertModel);
     $Sender->Form->AddHidden('DiscussionID', $DiscussionID);
     
-    $Sender->Title(T('Add Discussion Message'));
+    $Sender->Title(T('Add Discussion Insert'));
 
     if($Sender->Form->IsPostBack() != FALSE) {
-      $MessageID = $Sender->Form->Save();
-      if($MessageID) {
-        $Message = $DiscussionMessageModel->GetID($MessageID);
-        $Sender->InformMessage(T('Discussion Message added successfully!'));
-        $Sender->JsonTarget('.MessageList.Discussion', RenderDiscussionMessage($Message), 'After');
-        $Sender->JsonTarget('#DiscussionMessage_' . $Message->DiscussionMessageID, NULL, 'Highlight');
+      $InsertID = $Sender->Form->Save();
+      if($InsertID) {
+        $Insert = $DiscussionInsertModel->GetID($InsertID);
+        $Sender->InformMessage(T('Discussion Insert added successfully!'));
+        $Sender->JsonTarget('.MessageList.Discussion', RenderDiscussionInsert($Insert), 'After');
+        $Sender->JsonTarget('#DiscussionInsert_' . $Insert->DiscussionInsertID, NULL, 'Highlight');
       }
     }
 
-    $Sender->Render($this->GetView('message.php'));
+    $Sender->Render($this->GetView('insert.php'));
   }
   
   public function DiscussionController_Render_Before($Sender) {
-    $Sender->AddJsFile($this->GetResource('js/discussionmessages.js', FALSE, FALSE));
+    $Sender->AddJsFile($this->GetResource('js/discussioninserts.js', FALSE, FALSE));
   }
   
-	public function SettingsController_DiscussionMessages_Create($Sender) {
+	public function SettingsController_DiscussionInserts_Create($Sender) {
     $Sender->Permission('Garden.Settings.Manage');
-		$Sender->AddSideMenu('settings/discussionmessages');
-    $Sender->AddJsFile($this->GetResource('js/discussionmessages.js', FALSE, FALSE));
+		$Sender->AddSideMenu('settings/discussioninserts');
+    $Sender->AddJsFile($this->GetResource('js/discussioninserts.js', FALSE, FALSE));
 		$this->Dispatch($Sender, $Sender->RequestArgs);
 	}
   
   public function Controller_Index($Sender) {
     $Sender->Title($this->GetPluginName() . ' ' . T('Settings'));
     
-    $DiscussionMessageModel = new DiscussionMessageModel();
-    $DiscussionMessages = $DiscussionMessageModel->Get();
+    $DiscussionInsertModel = new DiscussionInsertModel();
+    $DiscussionInserts = $DiscussionInsertModel->Get();
     
-    $Sender->SetData('DiscussionMessages', $DiscussionMessages);
+    $Sender->SetData('DiscussionInserts', $DiscussionInserts);
 		$Sender->Render($this->GetView('settings.php'));
   }
   
@@ -120,39 +120,39 @@ class DiscussionMessages extends Gdn_Plugin {
   }
 	
   public function Controller_Edit($Sender) {    
-    $DiscussionMessageModel = new DiscussionMessageModel();
-    $Sender->Form->SetModel($DiscussionMessageModel);
+    $DiscussionInsertModel = new DiscussionInsertModel();
+    $Sender->Form->SetModel($DiscussionInsertModel);
 
-    $Sender->Title(T('Add Discussion Message'));
+    $Sender->Title(T('Add Discussion Insert'));
     $Edit = FALSE;
-    $MessageID = GetValue(1, $Sender->RequestArgs, FALSE);
-    if($MessageID) {
-      $Sender->DiscussionMessage = $DiscussionMessageModel->GetID($MessageID);
-      $Sender->Form->AddHidden('DiscussionMessageID', $MessageID);
+    $InsertID = GetValue(1, $Sender->RequestArgs, FALSE);
+    if($InsertID) {
+      $Sender->DiscussionInsert = $DiscussionInsertModel->GetID($InsertID);
+      $Sender->Form->AddHidden('DiscussionInsertID', $InsertID);
       $Edit = TRUE;
-      $Sender->Title(T('Edit Discussion Message'));
+      $Sender->Title(T('Edit Discussion Insert'));
     }
 
     if($Sender->Form->IsPostBack() == FALSE) {
-      if(property_exists($Sender, 'DiscussionMessage')) {
-        $Sender->Form->SetData($Sender->DiscussionMessage);
+      if(property_exists($Sender, 'DiscussionInsert')) {
+        $Sender->Form->SetData($Sender->DiscussionInsert);
       }
     }
     else {
-      $MessageID = $Sender->Form->Save();
-      if($MessageID) {
-        $Message = $DiscussionMessageModel->GetID($MessageID);
+      $InsertID = $Sender->Form->Save();
+      if($InsertID) {
+        $Insert = $DiscussionInsertModel->GetID($InsertID);
         if($Edit) {
-          $Sender->JsonTarget('#DiscussionMessage_' . $Message->DiscussionMessageID, RenderDiscussionMessage($Message), 'Html');
-          $Sender->JsonTarget('#DiscussionMessage_' . $Message->DiscussionMessageID, NULL, 'Highlight');
-          $Sender->InformMessage(T('Discussion Message updated successfully!'));
+          $Sender->JsonTarget('#DiscussionInsert_' . $Insert->DiscussionInsertID, RenderDiscussionInsert($Insert), 'Html');
+          $Sender->JsonTarget('#DiscussionInsert_' . $Insert->DiscussionInsertID, NULL, 'Highlight');
+          $Sender->InformMessage(T('Discussion Insert updated successfully!'));
         }
         else {
-          $Sender->InformMessage(T('Discussion Message added successfully!'));
+          $Sender->InformMessage(T('Discussion Insert added successfully!'));
         }
         
         if($Sender->DeliveryType() == DELIVERY_TYPE_ALL) {
-          Redirect('/settings/discussionmessages');
+          Redirect('/settings/discussioninserts');
         }
       }
     }
@@ -161,30 +161,30 @@ class DiscussionMessages extends Gdn_Plugin {
   }
   
   public function Controller_Delete($Sender) {
-    $DiscussionMessageModel = new DiscussionMessageModel();
+    $DiscussionInsertModel = new DiscussionInsertModel();
     
-    $MessageID = GetValue(1, $Sender->RequestArgs, FALSE);
-    $DiscussionMessage = $DiscussionMessageModel->GetID($MessageID);
+    $InsertID = GetValue(1, $Sender->RequestArgs, FALSE);
+    $DiscussionInsert = $DiscussionInsertModel->GetID($InsertID);
 
-    if(!$DiscussionMessage) {
-      throw NotFoundException(T('Discussion Message'));
+    if(!$DiscussionInsert) {
+      throw NotFoundException(T('Discussion Insert'));
     }
 
     $Sender->Permission('Garden.Settings.Manage');
 
-    $Sender->SetData('Title', T('Delete Discussion Message'));
+    $Sender->SetData('Title', T('Delete Discussion Insert'));
     if($Sender->Form->IsPostBack()) {
-      $Error = $DiscussionMessageModel->Delete($MessageID);
+      $Error = $DiscussionInsertModel->Delete($InsertID);
       if((is_object($Error) && $Error->Result()) || (!is_object($Error) && $Error)) {
-        $Sender->Form->AddError(T('Unable to delete discussion message!'));
+        $Sender->Form->AddError(T('Unable to delete discussion insert!'));
       }
 
       if($Sender->Form->ErrorCount() == 0) {
         if($Sender->DeliveryType() === DELIVERY_TYPE_ALL) {
-          Redirect('settings/discussionmessages');
+          Redirect('settings/discussioninserts');
         }
 
-        $Sender->JsonTarget('#DiscussionMessage_' . $MessageID, NULL, 'SlideUp');
+        $Sender->JsonTarget('#DiscussionInsert_' . $InsertID, NULL, 'SlideUp');
       }
     }
     $Sender->Render($this->GetView('delete.php'));
@@ -199,12 +199,12 @@ class DiscussionMessages extends Gdn_Plugin {
   
   public function DiscussionController_AfterDiscussion_Handler($Sender) {
     if(!GetValue('DM_Handled', $Sender->EventArguments, FALSE)) {    
-      $DiscussionMessageModel = new DiscussionMessageModel();
+      $DiscussionInsertModel = new DiscussionInsertModel();
       $Discussion = GetValue('Discussion', $Sender->EventArguments);
       $DiscussionID = $Discussion->DiscussionID;
-      $Messages = $DiscussionMessageModel->GetDiscussionID($DiscussionID);
-      if(count($Messages)) {
-        echo RenderDiscussionMessages($Messages);
+      $Inserts = $DiscussionInsertModel->GetDiscussionID($DiscussionID);
+      if(count($Inserts)) {
+        echo RenderDiscussionInserts($Inserts);
       }
       $Sender->EventArguments['DM_Handled'] = TRUE;
     }
@@ -218,9 +218,9 @@ class DiscussionMessages extends Gdn_Plugin {
     $Database = Gdn::Database();
     $Construct = $Database->Structure();
 
-    $Construct->Table('DiscussionMessage');
+    $Construct->Table('DiscussionInsert');
     $Construct
-            ->PrimaryKey('DiscussionMessageID')
+            ->PrimaryKey('DiscussionInsertID')
             ->Column('Name', 'varchar(255)')
             ->Column('Body', 'text', FALSE, 'fulltext')
             ->Column('MobileBody', 'text', TRUE, 'fulltext')

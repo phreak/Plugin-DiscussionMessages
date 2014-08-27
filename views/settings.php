@@ -6,8 +6,8 @@ echo Wrap($this->Data('Title'), 'h1');
 echo $this->Form->Open();
 echo $this->Form->Errors();
 
-echo Wrap(Wrap(T('Plugin.DiscussionMessages.Settings.Desc'), 'div'), 'div', array('class' => 'Wrap'));
-echo Wrap(Anchor(T('Plugin.DiscussionMessages.Add'), 'settings/discussionmessages/add', array('class' => 'SmallButton')), 'div', array('class' => 'Wrap'));
+echo Wrap(Wrap(T('Plugin.DiscussionInserts.Settings.Desc'), 'div'), 'div', array('class' => 'Wrap'));
+echo Wrap(Anchor(T('Plugin.DiscussionInserts.Add'), 'settings/discussioninserts/add', array('class' => 'SmallButton')), 'div', array('class' => 'Wrap'));
 
 ?>
 <table id="Actions" class="AltRows">
@@ -23,15 +23,15 @@ echo Wrap(Anchor(T('Plugin.DiscussionMessages.Add'), 'settings/discussionmessage
   <tbody>
     <?php
     $Alt = 'Alt';
-    foreach($this->Data('DiscussionMessages') as $DiscussionMessage) {
+    foreach($this->Data('DiscussionInserts') as $DiscussionInsert) {
       $Alt = $Alt ? '' : 'Alt';
       $Row = '';
-      $Row .= Wrap(Gdn_Format::Html($DiscussionMessage->Name), 'td');
-      $Row .= Wrap(Anchor(T('[Link]'), '/discussion/' . $DiscussionMessage->DiscussionID), 'td');
-      $Row .= Wrap(Gdn_Format::Html($DiscussionMessage->Body), 'td');
-      $Row .= Wrap(Gdn_Format::Html($DiscussionMessage->MobileBody), 'td');
-      $Row .= Wrap(Anchor(T('Edit'), 'settings/discussionmessages/edit/' . $DiscussionMessage->DiscussionMessageID, array('class' => 'SmallButton')) . Anchor(T('Delete'), 'settings/discussionmessages/delete/' . $DiscussionMessage->DiscussionMessageID, array('class' => 'Danger Popup SmallButton')), 'td');
-      echo Wrap($Row, 'tr', array('id' => 'DiscussionMessageID_' . $DiscussionMessage->DiscussionMessageID, 'data-discussionmessageid' => $DiscussionMessage->DiscussionMessageID, 'class' => $Alt));
+      $Row .= Wrap(Gdn_Format::Html($DiscussionInsert->Name), 'td');
+      $Row .= Wrap(Anchor(T('[Link]'), '/discussion/' . $DiscussionInsert->DiscussionID), 'td');
+      $Row .= Wrap(Gdn_Format::Html($DiscussionInsert->Body), 'td');
+      $Row .= Wrap(Gdn_Format::Html($DiscussionInsert->MobileBody), 'td');
+      $Row .= Wrap(Anchor(T('Edit'), 'settings/discussioninserts/edit/' . $DiscussionInsert->DiscussionInsertID, array('class' => 'SmallButton')) . Anchor(T('Delete'), 'settings/discussioninserts/delete/' . $DiscussionInsert->DiscussionInsertID, array('class' => 'Danger Popup SmallButton')), 'td');
+      echo Wrap($Row, 'tr', array('id' => 'DiscussionInsertID_' . $DiscussionInsert->DiscussionInsertID, 'data-discussioninsertid' => $DiscussionInsert->DiscussionInsertID, 'class' => $Alt));
     }
     ?>
   </tbody>

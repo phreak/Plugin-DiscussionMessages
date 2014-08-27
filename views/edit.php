@@ -15,18 +15,18 @@ echo $this->Form->Errors();
   </li>
   <li>
     <?php
-    echo $this->Form->Label('Message', 'Body');
+    echo $this->Form->Label('Insert', 'Body');
     echo $this->Form->TextBox('Body', array('multiline' => TRUE));
     ?>
   </li>
   <li id="MobileBodyCheck">
     <?php
-    echo $this->Form->CheckBox('MobileBodyCheck', 'Use a separate message for Mobile users?', array('checked' => 'checked'));
+    echo $this->Form->CheckBox('MobileBodyCheck', 'Use a separate insert for Mobile users?', array('checked' => 'checked'));
     ?>
   </li>
   <li id="MobileBodyRow">
     <?php
-    echo $this->Form->Label('Mobile Message', 'MobileBody');
+    echo $this->Form->Label('Mobile Insert', 'MobileBody');
     echo $this->Form->TextBox('MobileBody', array('multiline' => TRUE));
     ?>
   </li>
