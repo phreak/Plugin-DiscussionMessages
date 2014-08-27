@@ -15,7 +15,7 @@
 */
 $PluginInfo['DiscussionInserts'] = array(
 	'Name' => 'Discussion Inserts',
-	'Description' => 'Adds inserts to specific discussions.',
+	'Description' => 'Adds inserts to specific discussions. Created by Zachary Doll and VanillaSkins.com - #1 Themeshop for Vanilla.',
 	'Version' => '0.1',
 	'RequiredApplications' => array('Vanilla' => '2.0.18.13'),
 	'RequiredTheme' => FALSE,
