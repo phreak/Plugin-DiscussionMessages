@@ -1,5 +1,3 @@
-Not Production Ready
-
 Discussion Inserts
 ===================
 A Vanilla Forums plugin that attaches an insert to a specific discussion.
